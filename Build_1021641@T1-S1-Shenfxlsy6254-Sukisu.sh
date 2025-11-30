@@ -117,6 +117,7 @@ export ZIPNAME="$ZIP_NAME"
 mkdir -p "$OUT_DIR"
 make O=out clean
 make mrproper
+rm -rf $(pwd)/build.log
 log "🎯 正在为设备编译: $DEVICE"
 log "⚙️  配置文件: $DEFCONFIG"
 log "📦 输出文件: $ZIP_NAME"
@@ -126,12 +127,6 @@ if ! command -v clang &> /dev/null; then
     error_exit "clang 不在 PATH 中！请运行: export PATH=\"$TOOLCHAIN_DIR/bin:\$PATH\""
 fi
 log "clang 已找到: $(command -v clang)"
-# -------------------------------
-# 复制驱动文件
-# -------------------------------
-cp /mnt/d/.workgroups/FT8719_Pramboot_V0.5_20171221.i ./drivers/input/touchscreen/focaltech_touch/include/pramboot/
-cp /mnt/d/.workgroups/fw_ft3518_j9.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
-cp /mnt/d/.workgroups/fw_sample.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
 # -------------------------------
 # 编译
 # -------------------------------
