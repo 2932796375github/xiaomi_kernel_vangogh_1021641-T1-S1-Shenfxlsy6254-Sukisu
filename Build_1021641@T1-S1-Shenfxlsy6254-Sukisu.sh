@@ -11,9 +11,9 @@ declare -A DEVICES=(
 )
 # ✅ 保存源码目录
 KERNEL_DIR="$(pwd)"
-TOOLCHAIN_DIR="$KERNEL_DIR/tool/gcc/neutron-clang/bin"
+TOOLCHAIN_DIR="$HOME/toolchains/neutron-clang"
 OUT_DIR="out"
-BUILD_LOG="/root/20250913-SukisuUltra_AK3_nongki_vangogh/kernel_xiaomi_vangogh/build.log"
+BUILD_LOG="$(pwd)/build.log"
 
 # ✅ 新增：KPM 修补配置（需确保 patch_linux 放在内核源码根目录）
 PATCH_LINUX_FILE="$KERNEL_DIR/patch_linux"  # patch_linux 路径，可自行调整
