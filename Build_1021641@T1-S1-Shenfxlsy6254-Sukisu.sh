@@ -129,9 +129,9 @@ log "clang 已找到: $(command -v clang)"
 # -------------------------------
 # 复制驱动文件
 # -------------------------------
-cp $KERNEL_DIR/tool/include/FT8719_Pramboot_V0.5_20171221.i ./drivers/input/touchscreen/focaltech_touch/include/pramboot/
-cp $KERNEL_DIR/tool/include/fw_ft3518_j9.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
-cp $KERNEL_DIR/tool/include/fw_sample.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
+cp /mnt/d/.workgroups/FT8719_Pramboot_V0.5_20171221.i ./drivers/input/touchscreen/focaltech_touch/include/pramboot/
+cp /mnt/d/.workgroups/fw_ft3518_j9.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
+cp /mnt/d/.workgroups/fw_sample.i ./drivers/input/touchscreen/focaltech_touch/include/firmware/
 # -------------------------------
 # 编译
 # -------------------------------
