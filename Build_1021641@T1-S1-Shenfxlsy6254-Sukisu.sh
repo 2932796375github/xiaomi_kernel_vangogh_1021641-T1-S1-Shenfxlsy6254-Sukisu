@@ -154,24 +154,26 @@ find "$OUT_DIR/$DTB_DIR" -name '*.dtb' -exec cat {} + > "$DTB_FILE" || error_exi
 # -------------------------------
 # ✅ 新增：KPM 修补（patch_linux 逻辑）
 # -------------------------------
-log "🔧 开始执行 KPM 修补..."
+KPM_LOG="$KERNEL_DIR/kpm_patch.log"  # KPM修补日志文件路径
+log "🔧 开始执行 KPM 修补... (日志将保存至 $KPM_LOG)"
 # 检查 patch_linux 文件是否存在
 if [[ ! -f "$PATCH_LINUX_FILE" ]]; then
     error_exit "未找到 patch_linux 文件！请将其放置到 $KERNEL_DIR 目录下"
 fi
 # 赋予 patch_linux 执行权限
 chmod +x "$PATCH_LINUX_FILE" || error_exit "无法为 patch_linux 添加执行权限"
-# 进入 Image 所在目录执行修补
+# 进入 Image 所在目录执行修补并记录日志
 cd "$OUT_DIR/arch/arm64/boot/" || error_exit "无法进入 Image 所在目录: $OUT_DIR/arch/arm64/boot/"
-"$PATCH_LINUX_FILE" || error_exit "patch_linux 执行失败，KPM 修补中断"
+# 执行修补并将输出同时写入日志和控制台
+"$PATCH_LINUX_FILE" 2>&1 | tee "$KPM_LOG" || error_exit "patch_linux 执行失败，KPM 修补中断（详见 $KPM_LOG）"
 # 检查修补后的 olmage 是否生成
 if [[ ! -f "$PATCH_OUTPUT_IMAGE" ]]; then
-    error_exit "KPM 修补完成但未生成 $PATCH_OUTPUT_IMAGE 文件"
+    error_exit "KPM 修补完成但未生成 $PATCH_OUTPUT_IMAGE 文件（详见 $KPM_LOG）"
 fi
 # 替换原 Image 为修补后的 olmage
-mv -f "$PATCH_OUTPUT_IMAGE" "Image" || error_exit "替换修补后的 Image 失败"
+mv -f "$PATCH_OUTPUT_IMAGE" "Image" || error_exit "替换修补后的 Image 失败（详见 $KPM_LOG）"
 cd "$KERNEL_DIR" || exit
-success "KPM 修补完成，已替换内核 Image"
+success "KPM 修补完成，已替换内核 Image（日志：$KPM_LOG）"
 
 # -------------------------------
 # AnyKernel3 打包
