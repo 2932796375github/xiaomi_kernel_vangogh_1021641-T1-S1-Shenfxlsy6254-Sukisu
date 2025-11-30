@@ -17,7 +17,7 @@ BUILD_LOG="$(pwd)/build.log"
 
 # ✅ 新增：KPM 修补配置（需确保 patch_linux 放在内核源码根目录）
 PATCH_LINUX_FILE="$KERNEL_DIR/patch_linux"  # patch_linux 路径，可自行调整
-PATCH_OUTPUT_IMAGE="olmage"                 # 修补后生成的文件名称
+PATCH_OUTPUT_IMAGE="oImage"                 # 修补后生成的文件名称
 
 # -------------------------------
 # 函数
