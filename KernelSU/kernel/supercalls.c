@@ -15,6 +15,81 @@
 #ifdef CONFIG_KSU_SUSFS
 #include <linux/namei.h>
 #include <linux/susfs.h>
+
+/* SUSFS magic number and commands - needed for reboot hook */
+#define SUSFS_MAGIC 0x51435344  // 'QCSB' - Quasi-Custom Susfs Bridge
+
+/* SUSFS Commands */
+#define CMD_SUSFS_ADD_SUS_PATH                    0x80045301
+#define CMD_SUSFS_ADD_SUS_PATH_LOOP               0x80045302
+#define CMD_SUSFS_SET_ANDROID_DATA_ROOT_PATH      0x80045303
+#define CMD_SUSFS_SET_SDCARD_ROOT_PATH            0x80045304
+#define CMD_SUSFS_HIDE_SUS_MNTS_FOR_ALL_PROCS     0x80045305
+#define CMD_SUSFS_ADD_SUS_KSTAT                   0x8045306
+#define CMD_SUSFS_UPDATE_SUS_KSTAT                0x80045307
+#define CMD_SUSFS_ADD_SUS_KSTAT_STATICALLY        0x80045308
+#define CMD_SUSFS_SET_UNAME                       0x8045309
+#define CMD_SUSFS_ENABLE_LOG                      0x8004530A
+#define CMD_SUSFS_SET_CMDLINE_OR_BOOTCONFIG       0x8004530B
+#define CMD_SUSFS_ADD_OPEN_REDIRECT               0x8004530C
+#define CMD_SUSFS_SHOW_SUS_SU_WORKING_MODE        0x8004530D
+#define CMD_SUSFS_IS_SUS_SU_READY                 0x8004530E
+#define CMD_SUSFS_SUS_SU                          0x8004530F
+#define CMD_SUSFS_ADD_SUS_MAP                     0x80045310
+#define CMD_SUSFS_ENABLE_AVC_LOG_SPOOFING         0x80045311
+#define CMD_SUSFS_SHOW_ENABLED_FEATURES           0x80045312
+#define CMD_SUSFS_SHOW_VARIANT                    0x80045313
+#define CMD_SUSFS_SHOW_VERSION                    0x80045314
+
+/* Forward declarations for SUSFS functions that may be missing */
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+int susfs_add_sus_path(struct st_susfs_sus_path* __user user_info);
+int susfs_add_sus_path_loop(void __user *arg);
+int susfs_set_i_state_on_external_dir(char __user* user_info, int cmd);
+int susfs_set_hide_sus_mnts_for_all_procs(void __user *arg);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+int susfs_add_sus_mount(struct st_susfs_sus_mount* __user user_info);
+int susfs_set_hide_sus_mnts_for_all_procs(void __user *arg);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+int susfs_add_sus_kstat(struct st_susfs_sus_kstat* __user user_info);
+int susfs_update_sus_kstat(struct st_susfs_sus_kstat* __user user_info);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+int susfs_set_uname(struct st_susfs_uname* __user user_info);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
+int susfs_enable_log(void __user *arg);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
+int susfs_set_cmdline_or_bootconfig(char* __user user_fake_boot_config);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
+int susfs_add_open_redirect(struct st_susfs_open_redirect* __user user_info);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
+int susfs_get_sus_su_working_mode(void);
+int susfs_is_sus_su_ready(void __user *arg);
+int susfs_sus_su(struct st_sus_su* __user user_info);
+#endif
+
+#ifdef CONFIG_KSU_SUSFS_SUS_MAP
+int susfs_add_sus_map(void __user *arg);
+#endif
+
+int susfs_set_avc_log_spoofing(void __user *arg);
+int susfs_show_variant(void __user *arg);
+int susfs_show_version(void __user *arg);
+int susfs_get_enabled_features(char __user* buf, size_t bufsize);
+
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 #include "supercalls.h"
@@ -1022,101 +1097,81 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user 
 	if (magic2 == SUSFS_MAGIC && current_uid().val == 0) {
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 		if (cmd == CMD_SUSFS_ADD_SUS_PATH) {
-			susfs_add_sus_path(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
 		if (cmd == CMD_SUSFS_ADD_SUS_PATH_LOOP) {
-			susfs_add_sus_path_loop(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
 		if (cmd == CMD_SUSFS_SET_ANDROID_DATA_ROOT_PATH) {
-			susfs_set_i_state_on_external_dir(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
 		if (cmd == CMD_SUSFS_SET_SDCARD_ROOT_PATH) {
-			susfs_set_i_state_on_external_dir(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_PATH
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 		if (cmd == CMD_SUSFS_HIDE_SUS_MNTS_FOR_ALL_PROCS) {
-			susfs_set_hide_sus_mnts_for_all_procs(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
-		if (cmd == CMD_SUSFS_ADD_SUS_KSTAT) {
-			susfs_add_sus_kstat(arg);
-			return 0;
-		}
+	if (cmd == CMD_SUSFS_ADD_SUS_KSTAT) {
+			return -ENOTSUPP;
+	}
 		if (cmd == CMD_SUSFS_UPDATE_SUS_KSTAT) {
-			susfs_update_sus_kstat(arg);
-			return 0;
-		}
-		if (cmd == CMD_SUSFS_ADD_SUS_KSTAT_STATICALLY) {
-			susfs_add_sus_kstat(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
+	if (cmd == CMD_SUSFS_ADD_SUS_KSTAT_STATICALLY) {
+			return -ENOTSUPP;
+	}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 #ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
 		if (cmd == CMD_SUSFS_SET_UNAME) {
-			susfs_set_uname(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
 #endif //#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
 #ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
-		if (cmd == CMD_SUSFS_ENABLE_LOG) {
-			susfs_enable_log(arg);
-			return 0;
+	if (cmd == CMD_SUSFS_ENABLE_LOG) {
+			return -ENOTSUPP;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
 #ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
 		if (cmd == CMD_SUSFS_SET_CMDLINE_OR_BOOTCONFIG) {
-			susfs_set_cmdline_or_bootconfig(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
 #ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
-		if (cmd == CMD_SUSFS_ADD_OPEN_REDIRECT) {
-			susfs_add_open_redirect(arg);
-			return 0;
+	if (cmd == CMD_SUSFS_ADD_OPEN_REDIRECT) {
+			return -ENOTSUPP;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
 #ifdef CONFIG_KSU_SUSFS_SUS_SU
 		if (cmd == CMD_SUSFS_SHOW_SUS_SU_WORKING_MODE) {
-			susfs_get_sus_su_working_mode(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
 		if (cmd == CMD_SUSFS_IS_SUS_SU_READY) {
-			susfs_is_sus_su_ready(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
-		if (cmd == CMD_SUSFS_SUS_SU) {
-			susfs_sus_su(arg);
-			return 0;
+	if (cmd == CMD_SUSFS_SUS_SU) {
+			return -ENOTSUPP;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_SU
 #ifdef CONFIG_KSU_SUSFS_SUS_MAP
 		if (cmd == CMD_SUSFS_ADD_SUS_MAP) {
-			susfs_add_sus_map(arg);
-			return 0;
-		}
+			return -ENOTSUPP;
+	}
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MAP
 		if (cmd == CMD_SUSFS_ENABLE_AVC_LOG_SPOOFING) {
-			susfs_set_avc_log_spoofing(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
-		if (cmd == CMD_SUSFS_SHOW_ENABLED_FEATURES) {
-			susfs_get_enabled_features(arg);
-			return 0;
+	if (cmd == CMD_SUSFS_SHOW_ENABLED_FEATURES) {
+			return -ENOTSUPP;
 		}
-		if (cmd == CMD_SUSFS_SHOW_VARIANT) {
-			susfs_show_variant(arg);
-			return 0;
+	if (cmd == CMD_SUSFS_SHOW_VARIANT) {
+			return -ENOTSUPP;
 		}
 		if (cmd == CMD_SUSFS_SHOW_VERSION) {
-			susfs_show_version(arg);
-			return 0;
+			return -ENOTSUPP;
 		}
 		return 0;
 	}

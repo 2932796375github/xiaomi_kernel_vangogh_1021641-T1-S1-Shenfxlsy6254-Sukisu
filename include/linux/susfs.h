@@ -7,6 +7,18 @@
 #include <linux/hashtable.h>
 #include <linux/path.h>
 #include <linux/susfs_def.h>
+#include <linux/list.h>
+#include <linux/uidgid.h>
+#include <linux/fs.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/uaccess.h>
+#include <linux/gfp.h>
+#include <linux/slab.h>
+#include <linux/string.h>
+#include <linux/cred.h>
+#include <linux/sched.h>
+#include <linux/mm_types.h>
 
 #define SUSFS_VERSION "v1.5.9"
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
@@ -141,10 +153,12 @@ struct st_sus_su {
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 int susfs_set_i_state_on_external_dir(char __user* user_info, int cmd);
 int susfs_add_sus_path(struct st_susfs_sus_path* __user user_info);
+void susfs_run_sus_path_loop(uid_t uid);
 #endif
 /* sus_mount */
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 int susfs_add_sus_mount(struct st_susfs_sus_mount* __user user_info);
+void susfs_reorder_mnt_id(void);
 #ifdef CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT
 int susfs_auto_add_sus_bind_mount(const char *pathname, struct path *path_target);
 #endif // #ifdef CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT
@@ -190,12 +204,22 @@ struct filename* susfs_get_redirected_path(unsigned long ino);
 /* sus_su */
 #ifdef CONFIG_KSU_SUSFS_SUS_SU
 int susfs_get_sus_su_working_mode(void);
+int susfs_is_sus_su_ready(void __user *arg);
 int susfs_sus_su(struct st_sus_su* __user user_info);
 #endif
+
+int susfs_set_avc_log_spoofing(void __user *arg);
+int susfs_show_variant(void __user *arg);
+int susfs_show_version(void __user *arg);
 
 int susfs_get_enabled_features(char __user* buf, size_t bufsize);
 
 /* susfs_init */
 void susfs_init(void);
+
+/* Additional functions required by setuid_hook.c */
+void susfs_set_current_proc_umounted(void);
+void susfs_reorder_mnt_id(void);
+void susfs_run_sus_path_loop(uid_t uid);
 
 #endif
