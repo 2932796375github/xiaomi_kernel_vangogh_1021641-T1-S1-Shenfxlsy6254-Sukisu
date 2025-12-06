@@ -3,6 +3,12 @@
 #include <linux/init.h>
 #include <linux/sched.h>
 #include <linux/uidgid.h>
+#include <linux/susfs.h>
+#include <linux/susfs_def.h>
+
+#ifdef CONFIG_KSU_SUSFS
+#include "../KernelSU/kernel/selinux/selinux.h"
+#endif
 
 // 声明在头文件中定义但需要实现的函数
 
@@ -36,7 +42,9 @@ void susfs_run_sus_path_loop(uid_t uid)
 #endif
 
 // 其他可能需要的函数
-u32 susfs_zygote_sid = 0;
+#ifdef CONFIG_KSU_SUSFS
+extern u32 susfs_zygote_sid;
+#endif
 
 bool fs_susfs_is_sid_equal(u32 sid1, u32 sid2)
 {
@@ -57,5 +65,7 @@ EXPORT_SYMBOL(susfs_run_sus_path_loop);
 #endif
 
 EXPORT_SYMBOL(susfs_init);
+#ifdef CONFIG_KSU_SUSFS
 EXPORT_SYMBOL(susfs_zygote_sid);
+#endif
 EXPORT_SYMBOL(fs_susfs_is_sid_equal);

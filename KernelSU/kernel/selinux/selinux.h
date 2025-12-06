@@ -31,6 +31,11 @@ u32 ksu_get_ksu_file_sid(void);
 int handle_sepolicy(unsigned long arg3, void __user *arg4);
 
 #ifdef CONFIG_KSU_SUSFS
+extern u32 susfs_zygote_sid;
+extern u32 susfs_ksu_sid;
+extern u32 susfs_init_sid;
+extern u32 susfs_priv_app_sid;
+
 bool susfs_is_sid_equal(void *sec, u32 sid2);
 u32 susfs_get_sid_from_name(const char *secctx_name);
 u32 susfs_get_current_sid(void);

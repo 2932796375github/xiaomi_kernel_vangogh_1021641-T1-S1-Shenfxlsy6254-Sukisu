@@ -4,6 +4,8 @@
 #include "linux/version.h"
 #include "selinux_defs.h"
 #include "../klog.h" // IWYU pragma: keep
+#include <linux/susfs.h>
+#include <linux/susfs_def.h>
 
 #define KERNEL_SU_DOMAIN "u:r:su:s0"
 
@@ -190,6 +192,7 @@ u32 ksu_get_ksu_file_sid(void)
 #ifndef KERNEL_SU_DOMAIN
 #define KERNEL_SU_DOMAIN "u:r:su:s0"
 #endif // #ifndef KERNEL_SU_DOMAIN
+
 u32 susfs_ksu_sid = 0;
 u32 susfs_init_sid = 0;
 u32 susfs_zygote_sid = 0;
