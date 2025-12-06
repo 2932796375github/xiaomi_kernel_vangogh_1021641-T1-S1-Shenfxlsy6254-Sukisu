@@ -21,7 +21,7 @@ kernelsu-objs += file_wrapper.o
 kernelsu-objs += throne_comm.o
 kernelsu-objs += sulog.o
 kernelsu-objs += umount_manager.o
-kernelsu-objs += susfs.o
+# kernelsu-objs += susfs.o  # SUSFS is built as part of fs/ subsystem instead
 
 ifeq ($(CONFIG_KSU_MANUAL_SU), y)
 ccflags-y += -DCONFIG_KSU_MANUAL_SU

@@ -38,9 +38,9 @@ void susfs_run_sus_path_loop(uid_t uid)
 // 其他可能需要的函数
 u32 susfs_zygote_sid = 0;
 
-bool susfs_is_sid_equal(u32 sid1, u32 sid2)
+bool fs_susfs_is_sid_equal(u32 sid1, u32 sid2)
 {
-    return sid1 == sid2;
+	return sid1 == sid2;
 }
 
 #endif // CONFIG_KSU_SUSFS
@@ -58,4 +58,4 @@ EXPORT_SYMBOL(susfs_run_sus_path_loop);
 
 EXPORT_SYMBOL(susfs_init);
 EXPORT_SYMBOL(susfs_zygote_sid);
-EXPORT_SYMBOL(susfs_is_sid_equal);
+EXPORT_SYMBOL(fs_susfs_is_sid_equal);

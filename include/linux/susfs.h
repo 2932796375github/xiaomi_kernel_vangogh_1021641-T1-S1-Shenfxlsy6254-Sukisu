@@ -217,9 +217,10 @@ int susfs_get_enabled_features(char __user* buf, size_t bufsize);
 /* susfs_init */
 void susfs_init(void);
 
-/* Additional functions required by setuid_hook.c */
+/* Additional functions */
 void susfs_set_current_proc_umounted(void);
 void susfs_reorder_mnt_id(void);
 void susfs_run_sus_path_loop(uid_t uid);
+bool fs_susfs_is_sid_equal(u32 sid1, u32 sid2);
 
 #endif
